@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Video with Language Switch</title>
+
+    <style>
+      .chatbot .video-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 220px;
+        height: 280px;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 5px;
+        border-radius: 8px;
+        text-align: center;
+        transition: all 0.5s ease-in-out;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        flex-direction: column;
+      }
+      .chatbot .video-container.enlarged {
+        width: 300px;
+        height: 450px;
+      }
+      .chatbot #videoPlayer {
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+      .chatbot .menu-options {
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+        position: absolute;
+        bottom: 11px;
+      }
+      .chatbot .control-button {
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        padding: 5px 10px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 5px;
+        display: none;
+        z-index: 2;
+      }
+      .chatbot .mute-button {
+        top: 5px;
+        right: 5px;
+      }
+      .chatbot .pause-button {
+        top: 5px;
+        left: 5px;
+      }
+      .chatbot .close-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: #ac0909;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 5px;
+        z-index: 3;
+        display: block;
+      }
+      .chatbot .video-container.enlarged .control-button {
+        display: block;
+      }
+      .chatbot .video-container.enlarged .close-button {
+        display: none;
+      }
+      .chatbot .english-options,
+      .chatbot .hindi-options {
+        display: none; /* Hide both initially */
+      }
+      .chatbot .hindi-options {
+        display: none; /* Hide by default */
+        flex-direction: column; /* Make buttons stack vertically */
+        gap: 5px; /* Add spacing between buttons */
+        margin-top: 10px;
+        position: absolute;
+        bottom: 11px;
+      }
+
+      .chatbot button.hindi {
+        background-color: #d32f2f; /* Red shade for Hindi buttons */
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .chatbot button.yellow {
+        background-color: #ff9800;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      .chatbot button.green {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      .chatbot .back-button {
+        background-color: #d32f2f;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      .chatbot .language-buttons {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <h1>Welcome to Our Website</h1>
+    </div>
+
+    <div class="chatbot">
+    <div class="video-container" id="videoContainer" onclick="toggleSize()">
+      <video id="videoPlayer" autoplay muted>
+        <source id="videoSource" src="" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+
+
+      <div class="language-buttons" id="menuOptions">
+        
+      </div>
+
+      <button class="control-button mute-button" onclick="toggleMute()">
+        🔊
+      </button>
+      <button class="control-button pause-button" onclick="togglePause()">
+        ⏸️
+      </button>
+      <button class="close-button" id="closeButton" onclick="closeVideo(event)">
+        ❌
+      </button>
+    </div>
+    </div>
+
+
+
+
+    <script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+
+
+
+
+    <script>
+      //json data
+      let mainVideo = '';
+      let menuArray = '';
+
+      const apiUrl = 'https://aivideo.clfsofttech.com/api/client/eyJpdiI6InpjZzFxRldEczE2TndHd3lkdmNVeGc9PSIsInZhbHVlIjoiQVA2dmRXUjkzYnV6cmxIdnVEL3F3dz09IiwibWFjIjoiZWM0N2IzZjkzMTY5NWY2ODI4OWI3M2M1ZGJiMTg0NDExZWRkMmZmMzZlYjQzYmY5YmQ4ZTkyMjE1NTk2MTI0ZSIsInRhZyI6IiJ9';
+
+      //for back button
+      let lastIdArray = [];
+
+      //for video player
+      let videoQueue = [];
+      let videoPlayer = document.getElementById("videoPlayer");
+      let videoSource = document.getElementById("videoSource");
+      let videoContainer = document.getElementById("videoContainer");
+
+      init();
+
+
+      function init(){
+          $.ajax({
+            type: "GET",
+            url: apiUrl,
+            cache: false,
+            success: function(data){
+              mainVideo = data.client.video;
+              menuArray = data.category;
+
+              //...
+              videoQueue = [mainVideo];
+              playNextVideo();
+
+              //delay(1000).then(() => toggleMute());
+
+              initHtml();
+            }
+          });
+      }
+      
+      function initHtml(){
+        let menuHTML = '';
+
+        menuArray.forEach((item) => {
+
+            menuHTML += `<button class="itemData ${item.parent_id?'green':'yellow'} item_${item.id} parent_${item.parent_id}" data-item="${item.id}" data-parent="${item.parent_id}" data-video="${item.video}" style="display:${item.parent_id ? 'none' : 'block'}">
+              ${item.name}
+            </button>`;
+        });
+
+        menuHTML += `
+          <button class="back-button" onclick="toggleback()" style="display:none">
+              ← Back
+            </button>
+          <button class="back-button" onclick="toggleReset()" style="display:none">
+              &#x27F3; Reset
+            </button>
+        `
+
+        $('#menuOptions').html(menuHTML);
+
+      }
+
+      $(document).on('click', '.itemData', function(){
+        let v_item = $(this).data('item');
+        let v_parent = $(this).data('parent');
+        let v_video = $(this).data('video');
+
+        videoQueue = [v_video];
+        lastIdArray.push(v_parent);
+        //...
+        $('.itemData').hide();
+        $('.itemData.parent_'+v_item).show();
+        $('.back-button').show();
+
+        $('#menuOptions').removeClass('language-buttons');
+        $('#menuOptions').addClass('menu-options');
+        //console.log('v_item', v_item)
+        //console.log('v_parent', v_parent)
+
+        //...
+        playNextVideo();
+      });
+
+
+      function toggleback(){
+        let lPop = lastIdArray.pop();
+
+        $('.itemData').hide();
+        $('.itemData.parent_'+lPop).show();
+
+        if(!lPop){
+          $('.back-button').hide();
+          videoQueue = [mainVideo];
+          $('#menuOptions').removeClass('menu-options');
+          $('#menuOptions').addClass('language-buttons');
+        }
+        else {
+          let lVideo = $('.itemData.item_'+lPop).data('video');
+          videoQueue = [lVideo];
+        }
+
+        //...
+        playNextVideo();
+      }
+
+      function playNextVideo() {
+        if (videoQueue.length === 0) return;
+        videoSource.src = videoQueue.shift();
+        videoPlayer.load();
+        videoPlayer.play();
+        videoPlayer.onended = playNextVideo;
+      }
+
+      function delay(time) {
+          return new Promise((resolve) => setTimeout(resolve, time));
+      }
+
+
+      function toggleMute() {
+        videoPlayer.muted = !videoPlayer.muted;
+      }
+
+      function togglePause() {
+        videoPlayer.paused ? videoPlayer.play() : videoPlayer.pause();
+      }
+
+      function closeVideo(event) {
+        event.stopPropagation();
+        videoContainer.style.display = "none";
+      }
+
+      let enlarged = false;
+
+      function toggleSize() {
+        videoContainer.classList.add("enlarged");
+        if(!enlarged)
+          toggleMute()
+
+        enlarged = true;
+      }
+
+      function toggleReset(){
+        videoQueue = [mainVideo];
+        lastIdArray = [];
+
+        $('.itemData').hide();
+        $('.back-button').hide();
+        $('.itemData.parent_null').show();
+
+        $('#menuOptions').removeClass('menu-options');
+        $('#menuOptions').addClass('language-buttons');
+        //...
+        playNextVideo();
+      }
+
+
+
+
+
+    </script>
+  </body>
+</html>
