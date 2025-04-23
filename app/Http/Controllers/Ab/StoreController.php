@@ -25,6 +25,7 @@ class StoreController extends Controller
         $stores = Store::where(function ($query) use ($search) {
             $query->where('name', 'like', '%'.$search.'%');
         })
+        ->where('user_id', auth()->user()->id)
         ->orderBy('id', 'desc')
         ->paginate($this->perPage);
 
@@ -174,5 +175,7 @@ class StoreController extends Controller
 		$request->session()->flash('success', 'Default Store set successfully');
 		return redirect()->route("ab");
     }
+
+
 
 }

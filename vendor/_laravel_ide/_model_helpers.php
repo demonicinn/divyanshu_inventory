@@ -18,6 +18,9 @@ namespace App\Models {
      * @property int|null $store_id
      * @property int|null $user_id
      * @property int $id
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\StockProducts> $stockProducts
+     * @property-read int|null $stockProducts_count
+     * @property-read \App\Models\StockProducts $productCurrentStock
      * @method static \Illuminate\Database\Eloquent\Builder<Products>|Products whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Products>|Products whereUserId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Products>|Products whereStoreId($value)
@@ -657,6 +660,7 @@ namespace App\Models {
      * @property int|null $store_id
      * @property int $id
      * @property-read \App\Models\Products $product
+     * @property-read \App\Models\Stock $stock
      * @method static \Illuminate\Database\Eloquent\Builder<StockProducts>|StockProducts whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<StockProducts>|StockProducts whereStoreId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<StockProducts>|StockProducts whereStockId($value)
@@ -974,6 +978,8 @@ namespace App\Models {
      * @property string $name
      * @property int|null $user_id
      * @property int $id
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Products> $products
+     * @property-read int|null $products_count
      * @method static \Illuminate\Database\Eloquent\Builder<Store>|Store whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Store>|Store whereUserId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Store>|Store whereName($value)

@@ -16,4 +16,9 @@ class Store extends Model
         'images',
         'status',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Products::class, 'store_id');
+    }
 }

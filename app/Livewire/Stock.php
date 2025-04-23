@@ -115,7 +115,9 @@ class Stock extends Component
             // 'price' => '',
         ];
 
-        array_push($this->fieldsArray, $data);
+        for($i=0; $i<=5; $i++){
+            array_push($this->fieldsArray, $data);
+        }
     }
 
     public function removeField($id)

@@ -77,7 +77,7 @@
 
             <div class="card-footer">
                 <div class="float-end">
-                    <button type="button" class="btn btn-default" wire:click="addFields">Add</button>
+                    <button type="button" class="btn btn-primary" wire:click="addFields">Add</button>
                     
                     @if ($modelId)
                         <button type="button" class="btn btn-success" wire:click="update" wire:loading.attr="disabled">Update</button>

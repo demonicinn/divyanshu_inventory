@@ -21,5 +21,13 @@ class Products extends Model
     ];
 
 
+    public function stockProducts()
+    {
+        return $this->hasMany(StockProducts::class, 'product_id');
+    }
 
+    public function productCurrentStock()
+    {
+        return $this->hasOne(StockProducts::class, 'product_id')->orderBy('id', 'desc');
+    }
 }

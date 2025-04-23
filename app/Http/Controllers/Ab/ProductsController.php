@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Ab;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Products;
+use App\Models\StockProducts;
 use Illuminate\Support\Str;
 
 class ProductsController extends Controller
@@ -22,6 +23,7 @@ class ProductsController extends Controller
         $user = auth()->user();
 
         $products = Products::where('store_id', $user->store_id)
+        ->with('productCurrentStock')
         ->where(function ($query) use ($search) {
             $query->where('name', 'like', '%'.$search.'%');
         })
@@ -43,9 +45,9 @@ class ProductsController extends Controller
         $request->validate([
             'sku' => 'required',
             'name' => 'required|string|max:255',
-            'unit' => 'required',
-            'kg' => 'required',
-            'price' => 'required',
+            // 'unit' => 'required',
+            // 'kg' => 'required',
+            // 'price' => 'required',
             'status' => 'required',
 		]);
 
@@ -57,9 +59,9 @@ class ProductsController extends Controller
         $store->sku = $request->sku;
         $store->name = $request->name;
         $store->slug = Str::of($request->name)->slug('-');
-        $store->unit = $request->unit;
-        $store->kg = $request->kg;
-        $store->price = $request->price;
+        // $store->unit = $request->unit;
+        // $store->kg = $request->kg;
+        // $store->price = $request->price;
         $store->status = $request->status;
 
         //...files
@@ -103,9 +105,9 @@ class ProductsController extends Controller
         $request->validate([
             'sku' => 'required',
             'name' => 'required|string|max:255',
-            'unit' => 'required',
-            'kg' => 'required',
-            'price' => 'required',
+            // 'unit' => 'required',
+            // 'kg' => 'required',
+            // 'price' => 'required',
             'status' => 'required',
 		]);
 
@@ -114,9 +116,9 @@ class ProductsController extends Controller
         $product->sku = $request->sku;
         $product->name = $request->name;
         $product->slug = Str::of($request->name)->slug('-');
-        $product->unit = $request->unit;
-        $product->kg = $request->kg;
-        $product->price = $request->price;
+        // $product->unit = $request->unit;
+        // $product->kg = $request->kg;
+        // $product->price = $request->price;
         $product->status = $request->status;
 
         $filesArray = [];
@@ -156,7 +158,14 @@ class ProductsController extends Controller
     //show
     public function show(Request $request, Products $product)
     {
-        return view('ab.products.show', compact('product'));
+        $stockProducts = StockProducts::where('product_id', $product->id)
+            ->with('stock')
+            ->orderBy('id', 'desc')
+            ->paginate($this->perPage);
+
+        $product->load('productCurrentStock');
+
+        return view('ab.products.show', compact('product', 'stockProducts'));
     }
 
     //Delete

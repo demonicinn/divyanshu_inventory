@@ -29,6 +29,7 @@
                         {{-- <th>Unit</th> --}}
                         {{-- <th>Kg</th> --}}
                         {{-- <th>Price</th> --}}
+                        <th>Current Stock (Kg)</th>
                         <th>Status</th>
                         <th></th>
                     </tr>
@@ -43,8 +44,11 @@
                             {{-- <td>{{ $data->unit }}</td> --}}
                             {{-- <td>{{ $data->kg }}</td> --}}
                             {{-- <td>{{ priceDecimal($data->price) }}</td> --}}
+                            <td>{{ isset($data->productCurrentStock) ? $data->productCurrentStock->new_stock : 0 }}</td>
                             <td>{{ statusValue($data->status) }}</td>
                             <td>
+                                <a href="{{ route('ab.products.show', $data->id) }}"
+                                    class="btn btn-primary btn-sm">Details</a>
 
                                 <a href="{{ route('ab.products.edit', $data->id) }}"
                                     class="btn btn-warning btn-sm">Edit</a>

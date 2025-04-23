@@ -70,6 +70,7 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
                 Route::get('/create', 'create')->name('ab.store.create');
                 Route::post('/store', 'store')->name('ab.store.store');
                 Route::post('/select', 'defaultStore')->name('ab.store.select');
+                Route::get('/{store}/select', 'defaultStore')->name('ab.store.select.dashboard');
 
                 Route::get('/{store}/edit', 'edit')->name('ab.store.edit');
                 Route::patch('/{store}/update', 'update')->name('ab.store.update');
