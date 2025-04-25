@@ -21,13 +21,13 @@
                     </a>
                 </li>
 
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="{{ route('ab.store') }}"
                         class="nav-link{{ $segment2=='store'?' active':'' }}">
                         <i class="bi bi-shop"></i>
                         <p>Store</p>
                     </a>
-                </li>
+                </li> --}}
 
                 <li class="nav-item">
                     <a href="{{ route('ab.products') }}"

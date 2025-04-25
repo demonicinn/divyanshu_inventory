@@ -28,7 +28,12 @@
                         <td>{{ $data->issue_time }}</td>
                         <td>
                             <a href="{{ route('ab.inventory.pdf', $data->id) }}" class="btn btn-danger btn-sm">Generate PDF</a>
+                            @if($data->type == 'inword')
                             <a href="{{ route('ab.inventoryInword.show', $data->id) }}" class="btn btn-primary btn-sm">Details</a>
+                            @else
+                            <a href="{{ route('ab.inventoryOutword.show', $data->id) }}" class="btn btn-primary btn-sm">Details</a>
+                            @endif
+                            
                             {{-- <button class="btn btn-warning btn-sm" wire:click="editShowModal('{{ $data->id }}')" data-bs-toggle="modal" data-bs-target="#modalFormVisible">Edit</button> --}}
                         </td>
                     </tr>

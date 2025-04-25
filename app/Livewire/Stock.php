@@ -37,7 +37,8 @@ class Stock extends Component
     {
         $this->perPage = env('PER_PAGE');
         $this->user = auth()->user();
-        //$this->issue_date = date('Y/m/d H:i:a');
+        $this->issue_date = date('Y-m-d');
+        $this->issue_time = date('H:i');
 
         //...
         $this->products = ProductsModel::where('store_id', $this->user->store_id)
@@ -47,7 +48,9 @@ class Stock extends Component
             ->get();
 
         //...
-        $this->addFields();
+        for($i=0; $i<=4; $i++){
+            $this->addFields();
+        }
     }
 
     //...
@@ -115,9 +118,8 @@ class Stock extends Component
             // 'price' => '',
         ];
 
-        for($i=0; $i<=5; $i++){
-            array_push($this->fieldsArray, $data);
-        }
+        array_push($this->fieldsArray, $data);
+        
     }
 
     public function removeField($id)
@@ -141,7 +143,7 @@ class Stock extends Component
         foreach($this->fieldsArray as $i => $fields){
             //...
             $checkOldProduct = StockProductsModel::where('store_id', $this->user->store_id)
-                ->where('product_id', $fields['product_id'])->first();
+                ->where('product_id', $fields['product_id'])->orderBy('id', 'desc')->first();
 
             $products = new StockProductsModel;
             $products->store_id = $this->user->store_id;
@@ -155,7 +157,7 @@ class Stock extends Component
                 $products->new_stock = $checkOldProduct ? $checkOldProduct->new_stock + $fields['kg'] : $fields['kg'];
             }
             if($this->type=='outword'){
-                $products->new_stock = $checkOldProduct ? $checkOldProduct->new_stock - $fields['kg'] : $fields['kg'];
+                $products->new_stock = $checkOldProduct ? $checkOldProduct->new_stock - $fields['kg'] : -$fields['kg'];
             }
 
             $products->save();

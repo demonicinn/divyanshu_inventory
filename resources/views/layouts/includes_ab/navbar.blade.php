@@ -30,6 +30,10 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                     <div class="list-group">
+                        <a href="{{ route('ab.store') }}"
+                            class="list-group-item list-group-item-action">
+                            Stores
+                        </a>
                         <a href="{{ route('ab.profile') }}"
                             class="list-group-item list-group-item-action">
                             Profile
