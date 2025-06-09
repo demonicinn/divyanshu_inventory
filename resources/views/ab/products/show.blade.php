@@ -61,13 +61,24 @@
                 <tbody>
 
                     @foreach($stockProducts as $data)
-                        <tr class="align-middle">
+                        @php
+                            $type = $data->stock->type;
+                            $classAlert = 'table-success';
+                            $quantitySign = '+';
+                            if($type=='outword'){
+                                $classAlert = 'table-danger';
+                                $quantitySign = '-';
+                            }
+
+
+                        @endphp
+                        <tr class="align-middle {{ $classAlert }}">
                             <td>{{ $stockProducts->firstItem() + $loop->index }}</td>
-                            <td>{{ $data->units }}</td>
-                            <td>{{ $data->kg }}</td>
+                            <td>{{ $quantitySign }}{{ $data->units }}</td>
+                            <td>{{ $quantitySign }}{{ $data->kg }}</td>
                             <td>{{ $data->new_stock }}</td>
                             <td>{{ $data->stock->vehicle_number }}</td>
-                            <td>{{ ucwords($data->stock->type) }}</td>
+                            <td>{{ ucwords($type) }}</td>
                             <td>{{ $data->stock->issue_date }} - {{ date('h:ia', strtotime($data->stock->issue_time)) }}</td>
                         </tr>
                     @endforeach

@@ -97,7 +97,7 @@ class Stock extends Component
     public function handleProduct($fieldId, $fieldValue)
     {
         $checkOldProduct = StockProductsModel::where('store_id', $this->user->store_id)
-                ->where('product_id', $fieldValue)->first();
+                ->where('product_id', $fieldValue)->orderBy('id', 'desc')->first();
 
         if($checkOldProduct){
             $this->fieldsArray[$fieldId]['stock'] = $checkOldProduct->new_stock;
